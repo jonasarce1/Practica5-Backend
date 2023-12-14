@@ -36,9 +36,10 @@ ViajeSchema.path("date").validate(function (date: Date) {
 
 //Validate status
 ViajeSchema.path("status").validate(function (status: Status) {
-    if(status == Status.Realizado){ //Si el status es Realizado no se puede modificar
-        throw new Error('El status no se puede modificar si es Realizado');
+    if(Object.values(Status).includes(status)){ //El estado tiene que ser uno de los estados definidos
+        return true;
     }
+    throw new Error('El estado no es valido');
 })
 
 //Middleware hook, un viaje solo se puede crear si tanto conductor como cliente no tienen viajes activos y ademas el cliente tiene que tener algo de dinero en su cuenta
