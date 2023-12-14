@@ -4,8 +4,8 @@ import { ClienteModel } from "./cliente.ts";
 import { ConductorModel } from "./conductor.ts";
 
 const ViajeSchema = new Schema({
-    client: {type: Schema.Types.ObjectId, required: true, unique: true, ref: "Cliente"},
-    driver: {type: Schema.Types.ObjectId, required: true, unique: true, ref: "Conductor"},
+    client: {type: Schema.Types.ObjectId, required: true, ref: "Cliente"},
+    driver: {type: Schema.Types.ObjectId, required: true, ref: "Conductor"},
     money: {type: Number, required: true}, //Minimo 5 euros
     distance: {type: Number, required: true}, //En km, minimo en 0,01km
     date: {type: Date, required: true},

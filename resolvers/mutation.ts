@@ -184,6 +184,7 @@ export const Mutation = {
         try{
             //cambiamos el status del viaje a Realizado
             const viaje = await ViajeModel.findByIdAndUpdate(args.id, {status: "Realizado", date: new Date()}, {new: true, runValidators: false}).exec();
+            //Se le pone la fecha actual (la fecha de finalizacion del viaje) y no se pasan validaciones ya que ha terminado el viaje y si no daria error por las validaciones de la fecha
 
             if(!viaje){
                 throw new GraphQLError("No existe el viaje");
