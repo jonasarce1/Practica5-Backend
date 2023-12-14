@@ -51,9 +51,10 @@ ViajeSchema.pre("save", async function(next) {
         const viajesCliente = cliente.travels;
         const viajesConductor = conductor.travels;
         //Si el cliente no tiene viajes o bien dentro de sus viajes no hay ninguno con un estado que no sea realizado
-        if(viajesCliente.length == 0 || viajesCliente.every(viaje => viaje.status == Status.Realizado)){
+        if(!viajesCliente.some(viaje => viaje.status !== Status.Realizado)){
+            console.log("holo")
             //Si el conductor no tiene viajes o bien dentro de sus viajes no hay ninguno con un estado que no sea realizado
-            if(viajesConductor.length == 0 || viajesConductor.every(viaje => viaje.status == Status.Realizado)){
+            if(!viajesConductor.some(viaje => viaje.status !== Status.Realizado)){
                 //Si el cliente tiene dinero en su cuenta
                 if(cliente.cards.length > 0 && cliente.cards.some(card => card.money > 0)){
                     //si el dinero del cliente es mayor o igual al dinero del viaje
@@ -61,6 +62,7 @@ ViajeSchema.pre("save", async function(next) {
                         //Restamos el dinero al cliente
                         const card = cliente.cards.find(card => card.money >= viaje.money);
                         if(card){
+                            console.log("holo");
                             card.money -= viaje.money;
                             await cliente.save();
                             next();
@@ -74,6 +76,8 @@ ViajeSchema.pre("save", async function(next) {
             }else{
                 throw new Error('El conductor tiene un viaje activo');
             }
+        }else{
+            throw new Error('El cliente tiene un viaje activo');
         }
     }
     throw new Error('No existe cliente o conductor');
