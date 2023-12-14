@@ -109,7 +109,7 @@ export const Mutation = {
         }
     },
 
-    deleteCliente: async (_:unknown, args: {id: string}): Promise<string> => {
+    deleteCliente: async (_:unknown, args: {id: string}): Promise<ClienteModelType> => {
         try{
             const clienteBorrado = await ClienteModel.findByIdAndDelete(args.id).exec();
 
@@ -117,7 +117,7 @@ export const Mutation = {
                 throw new GraphQLError("No existe el cliente");
             }
 
-            return "Cliente borrado correctamente";
+            return clienteBorrado;
         }catch(error){
             if (error instanceof mongoose.Error.ValidationError) {
                 const validationErrors = Object.keys(error.errors).map(
@@ -130,7 +130,7 @@ export const Mutation = {
         }
     },
 
-    deleteConductor: async (_:unknown, args: {id: string}): Promise<string> => {
+    deleteConductor: async (_:unknown, args: {id: string}): Promise<ConductorModelType> => {
         try{
             const conductorBorrado = await ConductorModel.findByIdAndDelete(args.id).exec();
 
@@ -138,7 +138,7 @@ export const Mutation = {
                 throw new GraphQLError("No existe el conductor");
             }
 
-            return "Conductor borrado correctamente";
+            return conductorBorrado;
         }catch(error){
             if (error instanceof mongoose.Error.ValidationError) {
                 const validationErrors = Object.keys(error.errors).map(
@@ -151,7 +151,7 @@ export const Mutation = {
         }
     },
 
-    deleteTarjeta: async (_:unknown, args: {numero: string, cvv: string, expirity: string}): Promise<string> => {
+    deleteTarjeta: async (_:unknown, args: {numero: string, cvv: string, expirity: string}): Promise<Array<ClienteModelType>> => {
         try{
             //Encontramos todos los clientes que tengan la tarjeta
             const clientes = await ClienteModel.find({cards: {$elemMatch: {number: args.numero, cvv: args.cvv, expirity: args.expirity}}}).exec();
@@ -167,7 +167,7 @@ export const Mutation = {
                 await cliente.save();
             });
 
-            return "Tarjeta borrada correctamente";
+            return clientes;
         }catch(error){
             if (error instanceof mongoose.Error.ValidationError) {
                 const validationErrors = Object.keys(error.errors).map(
@@ -189,7 +189,7 @@ export const Mutation = {
                 throw new GraphQLError("No existe el viaje");
             }
 
-            return "Viaje terminado correctamente";
+            return "Viaje terminado";
         }catch(error){
             if (error instanceof mongoose.Error.ValidationError) {
                 const validationErrors = Object.keys(error.errors).map(
