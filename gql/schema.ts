@@ -49,9 +49,9 @@ export const typeDefs = `#graphql
         addConductor(name: String!, email: String!, username: String!): Conductor!
         addTarjeta(id: ID!, number: String!, cvv: String!, expirity: String!, money: Int!): Cliente!
         addViaje(client: ID!, driver: ID!, money: Int!, distance: Int!, date: String!, status: Status!): Viaje!
-        deleteCliente(id: ID!): Cliente!
-        deleteConductor(id: ID!): Conductor!
-        deleteTarjeta(numero: String!, cvv: String!, expirity: String!): Tarjeta!
+        deleteCliente(id: ID!): String!
+        deleteConductor(id: ID!): String!
+        deleteTarjeta(numero: String!, cvv: String!, expirity: String!): String!
         terminarViaje(id: ID!): String!
     }
 
