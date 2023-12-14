@@ -85,6 +85,10 @@ export const Mutation = {
 
     addViaje: async (_:unknown, args: {client: string, driver: string, money: number, distance: number, date: Date, status: string}): Promise<ViajeModelType> => {
         try{
+            if(args.status === "Realizado"){
+                throw new GraphQLError("El viaje no puede ser creado con el estado Realizado");
+            }
+
             const viaje = {
                 client: args.client,
                 driver: args.driver,
@@ -182,6 +186,12 @@ export const Mutation = {
 
     terminarViaje: async (_:unknown, args: {id: string}): Promise<string> => {
         try{
+            //si el estado del viaje es Realizado no se puede terminar
+            const viajeActual = await ViajeModel.findById(args.id).exec();
+            if(viajeActual?.status === "Realizado"){
+                throw new GraphQLError("El viaje ya esta terminado");
+            }
+
             //cambiamos el status del viaje a Realizado
             const viaje = await ViajeModel.findByIdAndUpdate(args.id, {status: "Realizado", date: new Date()}, {new: true, runValidators: false}).exec();
             //Se le pone la fecha actual (la fecha de finalizacion del viaje) y no se pasan validaciones ya que ha terminado el viaje y si no daria error por las validaciones de la fecha

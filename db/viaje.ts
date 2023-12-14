@@ -45,16 +45,16 @@ ViajeSchema.path("status").validate(function (status: Status) {
 //Middleware hook, un viaje solo se puede crear si tanto conductor como cliente no tienen viajes activos y ademas el cliente tiene que tener algo de dinero en su cuenta
 ViajeSchema.pre("save", async function(next) {
     const viaje = this as ViajeModelType;
-    const cliente = await ClienteModel.findById(viaje.client);
-    const conductor = await ConductorModel.findById(viaje.driver);
+    const cliente = await ClienteModel.findById(viaje.client).populate('travels').exec();
+    const conductor = await ConductorModel.findById(viaje.driver).populate('travels').exec();
     if(cliente && conductor){
         const viajesCliente = cliente.travels;
         const viajesConductor = conductor.travels;
         //Si el cliente no tiene viajes o bien dentro de sus viajes no hay ninguno con un estado que no sea realizado
-        if(!viajesCliente.some(viaje => viaje.status !== Status.Realizado)){
-            console.log("holo")
+        if(viajesCliente.length === 0 || viajesCliente.every(viaje => viaje.status === Status.Realizado)){
+            console.log("hola");
             //Si el conductor no tiene viajes o bien dentro de sus viajes no hay ninguno con un estado que no sea realizado
-            if(!viajesConductor.some(viaje => viaje.status !== Status.Realizado)){
+            if(viajesConductor.length === 0 || viajesConductor.every(viaje => viaje.status === Status.Realizado)){
                 //Si el cliente tiene dinero en su cuenta
                 if(cliente.cards.length > 0 && cliente.cards.some(card => card.money > 0)){
                     //si el dinero del cliente es mayor o igual al dinero del viaje
@@ -62,9 +62,11 @@ ViajeSchema.pre("save", async function(next) {
                         //Restamos el dinero al cliente
                         const card = cliente.cards.find(card => card.money >= viaje.money);
                         if(card){
-                            console.log("holo");
                             card.money -= viaje.money;
+                            cliente.travels.push(viaje); //Anyadimos el viaje al cliente y al conductor
                             await cliente.save();
+                            conductor.travels.push(viaje);
+                            await conductor.save();
                             next();
                         }
                     }else{
