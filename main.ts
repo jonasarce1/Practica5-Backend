@@ -77,7 +77,7 @@ const checkViajes = async () => {
   })
 }
 
-//CronJob que se ejecuta cada dia comprobando si hay tarjetas expiradas y viajes pasadosm url con documentacion: https://deno.land/x/deno_cron@v1.0.0
+//CronJob que se ejecuta cada dia comprobando si hay tarjetas expiradas y viajes pasados. url con documentacion: https://deno.land/x/deno_cron@v1.0.0
 daily(() => {
   console.log("Comprobando tarjetas expiradas");
   checkExpirity();
