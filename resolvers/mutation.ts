@@ -183,7 +183,7 @@ export const Mutation = {
     terminarViaje: async (_:unknown, args: {id: string}): Promise<string> => {
         try{
             //cambiamos el status del viaje a Realizado
-            const viaje = await ViajeModel.findByIdAndUpdate(args.id, {status: "Realizado"}, {new: true, runValidators: true}).exec();
+            const viaje = await ViajeModel.findByIdAndUpdate(args.id, {status: "Realizado", date: new Date()}, {new: true, runValidators: true}).exec();
 
             if(!viaje){
                 throw new GraphQLError("No existe el viaje");
